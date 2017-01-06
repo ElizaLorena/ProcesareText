@@ -122,5 +122,4 @@ keywords_1 = [(dictionary.synonym(w) + [w]) for w in keywords_1]
 keywords_1 = sum(keywords_1, [])  # flatten
 keywords_2 = ['and', 'vs', 'to', 'between']
 
-print()
 classifier = create_classifier()
