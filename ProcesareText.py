@@ -5,7 +5,8 @@ from PyDictionary import PyDictionary
 from nltk.corpus import nps_chat as nchat
 import nltk
 import random
-#import personalquestions as pq
+from DifferenceBetween import DifferenceBetween
+
 
 class ProcesareText:
     def __init__(self):
@@ -99,87 +100,6 @@ class ProcesareText:
             self.keyWords.append(list())
         for subiect in listaSubiecti:
             self.keyWords[1].append(subiect)
-
-    def DifferenceBetween(self):
-
-        keywords_1 = ['difference', 'compare', 'evaluate']
-        keywords_1 = [(self.dictionary.synonym(w) + [w]) for w in keywords_1]
-        keywords_1 = sum(keywords_1, [])  # flatten
-        keywords_2 = ['and', 'vs', 'to']
-
-        def create_classifier():
-            sample_matched = [
-                "What's the difference between an ocean and a sea?",
-                "What is the difference between weather and climate?",
-                "What would you say about the difference between atoms and elements?",
-                "How would you compare lacrosse to football?",
-                "How would you compare NetSuite vs Intacct?",
-            ]
-            sample_unmatched = nchat.xml_posts()[:10000]
-            features_matched = []
-            features_unmatched = []
-
-            for text in sample_matched:
-                features = (feature_select(text), 'matched')
-                features_matched.append(features)
-
-            for item in sample_unmatched:
-                text = item.text
-                features = (feature_select(text), 'unmatched')
-                features_unmatched.append(features)
-
-            train_features = features_matched + features_unmatched
-            return nltk.NaiveBayesClassifier.train(train_features)
-
-        def feature_select(text):
-            features = {}
-            for word, t in pos_tag(nltk.word_tokenize(text)):
-                features['contains(%s)' % word.lower()] = True
-                if word in keywords_1:
-                    features['contains(keywords_1)'] = True
-                if word in keywords_2:
-                    features['contains(keywords_2)'] = True
-            features['noun_count'] = count_nouns()
-            return features
-
-        def count_nouns():
-            nouns_found = 0
-            for tag in self.posTag:
-                word, t = tag
-                if t in ['NN', 'NNS'] and word not in keywords_1:
-                    nouns_found += 1
-            return nouns_found
-
-        def contains_cc():
-            for tag in self.posTag:
-                word, t = tag
-                if word in keywords_2 and t == 'CC':
-                    return True
-                if word == 'vs' and t in ['NN', 'JJ']:
-                    return True
-                if word == 'to' and t == 'TO':
-                    return True
-
-        cc_found = contains_cc()
-        nouns_found = count_nouns()
-
-        if not cc_found:
-            return False
-
-        if nouns_found < 2:
-            return False
-
-        classifier = create_classifier()
-        sentence = self.dialogue_act_features(self.text)
-        result = classifier.classify(sentence)
-
-        if result == 'matched':
-            for word, t in reversed(self.posTag):
-                if t in ['NN', 'NNS'] and word not in keywords_1:
-                    self._setkeyWordsCriteriu(word)
-            return True
-        else:
-            return False
 
     #tag[0] - life
     #tag[1] - NN
@@ -280,14 +200,33 @@ class ProcesareText:
     ####### END INFO ABOUT #######
 
     def setFilter(self):
+
         self.getTags()
-        for i in xrange(6):
-            try:
-                if getattr(self, self.filters[i])():
-                    self.searchType = i
+
+        for filterName in self.filters:
+
+            filterWasImported = filterName in globals()
+
+            if filterWasImported:
+                f = globals()[filterName]
+                r, v = f(self.text, self.posTag)
+
+                if r:
+                    self.searchType = filterName
+
+                    for item in v['criterii']:
+                        self._setkeyWordsCriteriu(item)
+
+                    for item in v['subiecti']:
+                        self._setkeyWordsSubiecti(item)
+
                     break
-            except Exception:
-                continue
+            else:
+                r = getattr(self, filterName, lambda: False)()
+
+                if r:
+                    self.searchType = filterName
+                    break
 
     def setInputType(self):
         self.inputType = self.classify_sentence(self.text)
@@ -300,12 +239,3 @@ print ('Tags: %r') %procesare.posTag
 print ('Search Type: %r') %procesare.searchType
 print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
 print ('Question: %r') %procesare.inputType
-
-'''print('Text: ', procesare.text)
-print('Tags: ', str(procesare.posTag))
-print('Search Type: ', procesare.searchType)
-print('Key Words (criterii, subiecti): ', procesare.keyWords)
-print('Question: ', procesare.inputType)'''
-
-
-#return searchType, inputType, criterii, subiecti
