@@ -307,4 +307,5 @@ print('Search Type: ', procesare.searchType)
 print('Key Words (criterii, subiecti): ', procesare.keyWords)
 print('Question: ', procesare.inputType)'''
 
+
 #return searchType, inputType, criterii, subiecti
