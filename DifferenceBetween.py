@@ -4,6 +4,8 @@ from PyDictionary import PyDictionary
 from nltk.corpus import nps_chat as nchat
 import nltk
 
+NOUN_TYPES = ['NN', 'NNS', 'NNP', 'PRP']
+
 
 def DifferenceBetween(text, posTag):
 
@@ -19,12 +21,12 @@ def DifferenceBetween(text, posTag):
     sentence = feature_select(text)
     result = classifier.classify(sentence)
 
-    keywords = {'subiecti': [], 'criterii': []}
+    keywords = {'subiecti': [], 'criterii': ['difference']}
 
     if result == 'matched':
         for word, t in reversed(posTag):
-            if t in ['NN', 'NNS'] and word not in keywords_1:
-                keywords['criterii'].append(word)
+            if t in NOUN_TYPES and word not in keywords_1:
+                keywords['subiecti'].append(word)
 
         return True, keywords
     else:
@@ -40,7 +42,9 @@ def create_classifier():
         "How would you compare lacrosse to football?",
         "How would you compare NetSuite vs Intacct?",
         "How many km are between Iasi and Hawaii?",
-        "Tell me the difference between Obama and Trump"
+        "Tell me the difference between Obama and Trump",
+        "What is the difference between me and you?",
+        "Elaborate on why Trump is better than Obama"
     ]
 
     sample_unmatched = nchat.xml_posts()[:800]
@@ -83,7 +87,7 @@ def count_nouns(text):
 
     for tag in posTag:
         word, t = tag
-        if t in ['NN', 'NNS', 'NNP'] and word not in keywords_1:
+        if t in NOUN_TYPES and word not in keywords_1:
             nouns_found += 1
 
     return nouns_found
@@ -101,6 +105,10 @@ def contains_cc(text):
             return True
         if word == 'to' and t == 'TO':
             return True
+        if word == 'than' and t == 'IN':
+            return True
+
+    return False
 
 
 dictionary = PyDictionary()
