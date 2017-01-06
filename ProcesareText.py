@@ -6,6 +6,7 @@ from nltk.corpus import nps_chat as nchat
 import nltk
 import random
 from DifferenceBetween import DifferenceBetween
+from YesOrNo import YesOrNo
 
 class ProcesareText:
     def __init__(self):
