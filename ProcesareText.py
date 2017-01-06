@@ -22,9 +22,15 @@ class ProcesareText:
         #train to classify Question
         self._setQuestionWorld()
 
+    def _clearParam(self):
+        self.searchType = None
+        self.inputType = None
+        self.keyWords = []
+
     def setText(self, text):
         self.originaltext = text
         self.text = self.errorSyntaxText(text)
+        self._clearParam()
 
     def _setQuestionWorld(self):
         posts = nchat.xml_posts()[:10000]
@@ -384,6 +390,7 @@ sample_texts = [
 ]
 
 for text in sample_texts:
+
     procesare.setText(text)
     procesare.setFilter()
     procesare.setInputType()
