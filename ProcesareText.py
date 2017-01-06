@@ -14,23 +14,25 @@ class ProcesareText:
         # inputType (tipul propozitiei)
         self.inputType = None
         # keyWords de forma [[(cuvant cheie, sinonim),(cuvant cheie, sinonim)],[Subiect1, Subiect2, ...]]
-        self.keyWords = []
+        self.keyWords = list()
         # full text
-        self.filters = ['YesOrNo', 'MathQuestion', 'ChooseBetween', 'DifferenceBetween', 'PersonalQuestion', 'InfoAbout']
+        self.filters = ['YesOrNo', 'PersonalQuestion', 'MathQuestion', 'ChooseBetween', 'DifferenceBetween', 'InfoAbout']
         self.dictionary = PyDictionary()
 
         #train to classify Question
         self._setQuestionWorld()
 
     def _clearParam(self):
+        self.originaltext = None
+        self.text = None
         self.searchType = None
         self.inputType = None
-        self.keyWords = []
+        self.keyWords = list()
 
     def setText(self, text):
+        self._clearParam()
         self.originaltext = text
         self.text = self.errorSyntaxText(text)
-        self._clearParam()
 
     def _setQuestionWorld(self):
         posts = nchat.xml_posts()[:10000]
@@ -382,11 +384,9 @@ class ProcesareText:
 procesare = ProcesareText()
 
 sample_texts = [
-    "How many km are between Iasi and Suceava?",
-    "What Is The Difference Between Alzheimer's and Dementia?",
     "Who is the best? Obama or Bush?",
-    "Who is older? Obama, Putin, Merkel or Churchill?",
-    "2+6?"
+    "Who has more apple juice? X, Y or Z?",
+    "Who is older? Obama, Putin, Merkel or Churchill?"
 ]
 
 for text in sample_texts:
