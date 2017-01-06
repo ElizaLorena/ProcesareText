@@ -17,8 +17,7 @@ class ProcesareText:
         # keyWords de forma [[(cuvant cheie, sinonim),(cuvant cheie, sinonim)],[Subiect1, Subiect2, ...]]
         self.keyWords = []
         # full text
-        self.text = self.errorSyntaxText("How many km are between Iasi and Suceava?")
-        self.filters = ['YesOrNo', 'PersonalQuestion', 'ChooseBetween', 'DifferenceBetween', 'MathQuestion', 'InfoAbout']
+        self.filters = ['YesOrNo', 'DifferenceBetween', 'PersonalQuestion', 'ChooseBetween', 'MathQuestion', 'InfoAbout']
         self.dictionary = PyDictionary()
 
         #train to classify Question
@@ -232,10 +231,21 @@ class ProcesareText:
         self.inputType = self.classify_sentence(self.text)
 
 procesare = ProcesareText()
-procesare.setFilter()
-procesare.setInputType()
-print ('Text: %r') %procesare.text
-print ('Tags: %r') %procesare.posTag
-print ('Search Type: %r') %procesare.searchType
-print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
-print ('Question: %r') %procesare.inputType
+
+sample_texts = [
+    "How many km are between Iasi and Suceava?",
+    "What Is The Difference Between Alzheimer's and Dementia?"
+]
+
+for t in sample_texts:
+
+    procesare.text = procesare.errorSyntaxText(t)
+
+    procesare.setFilter()
+    procesare.setInputType()
+
+    print ('Text: %r') %procesare.text
+    print ('Tags: %r') %procesare.posTag
+    print ('Search Type: %r') %procesare.searchType
+    print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
+    print ('Question: %r') %procesare.inputType

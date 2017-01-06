@@ -4,21 +4,8 @@ from PyDictionary import PyDictionary
 from nltk.corpus import nps_chat as nchat
 import nltk
 
-dictionary = PyDictionary()
-
-keywords_1 = ['difference', 'compare', 'evaluate']
-keywords_1 = [(dictionary.synonym(w) + [w]) for w in keywords_1]
-keywords_1 = sum(keywords_1, [])  # flatten
-keywords_2 = ['and', 'vs', 'to']
-
-classifier = None
-
 
 def DifferenceBetween(text, posTag):
-
-    global classifier
-    if classifier is None:
-        classifier = create_classifier()
 
     cc_found = contains_cc(text)
     nouns_found = count_nouns(text)
@@ -52,6 +39,8 @@ def create_classifier():
         "What would you say about the difference between atoms and elements?",
         "How would you compare lacrosse to football?",
         "How would you compare NetSuite vs Intacct?",
+        "How many km are between Iasi and Hawaii?",
+        "Tell me the difference between Obama and Trump"
     ]
 
     sample_unmatched = nchat.xml_posts()[:800]
@@ -94,7 +83,7 @@ def count_nouns(text):
 
     for tag in posTag:
         word, t = tag
-        if t in ['NN', 'NNS'] and word not in keywords_1:
+        if t in ['NN', 'NNS', 'NNP'] and word not in keywords_1:
             nouns_found += 1
 
     return nouns_found
@@ -112,3 +101,13 @@ def contains_cc(text):
             return True
         if word == 'to' and t == 'TO':
             return True
+
+
+dictionary = PyDictionary()
+
+keywords_1 = ['difference', 'compare', 'evaluate']
+keywords_1 = [(dictionary.synonym(w) + [w]) for w in keywords_1]
+keywords_1 = sum(keywords_1, [])  # flatten
+keywords_2 = ['and', 'vs', 'to']
+
+classifier = create_classifier()
