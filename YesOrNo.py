@@ -10,16 +10,37 @@ lemmatizer = WordNetLemmatizer()
 
 
 def YesOrNo(text, posTag):
-    print("YEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n")
-    for tagPair in posTag:
-        print(tagPair)
+    keywords = {'subiecti': [], 'criterii': []}
 
-        #1.
-        if(lemmatizer.lemmatize(tagPair[0], 'v') == "be"):
-            subject = getNextTag(posTag, )
-        
-    return False, []
-    print("BOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n\n")
+    for index in xrange(len(posTag)):
+        tagPair = posTag[index]
+
+        # 1.
+        if(
+            (
+                tagPair[1]=="VBD" 
+                or 
+                tagPair[1]=="VBP" 
+                or 
+                tagPair[1]=="VBZ" 
+            )
+            and 
+            lemmatizer.lemmatize(tagPair[0], 'v') == "be"
+        ):
+            subject, subjectIndex = getNextTag(pos_tag, index, ["NN","NNS","NNP","NNPS","PRP"])
+
+            if subject is not None:
+                criterion = getNextTag(pos_tag, subjectIndex, ["NN","NNS","NNP","NNPS","JJ","JJS","JJR"])
+
+                if creterion is not None:
+                    keywords['criterii'].append(creterion)
+                    keywords['subiecti'].append(subject)
+                    return True, keywords
+        #END 1. 
+        # 
+        # 2.   
+    return False, keywords
+    
 
 
 
@@ -27,7 +48,7 @@ def YesOrNo(text, posTag):
 sample_questions = [
         #1. If the main verb of the sentence is "to be", simply invert the subject and the verb to be:
         "Are they American?", # to be - subject - object
-        "Is New York nice? ", # from "New York is nice"
+        "Is New York nice?", # from "New York is nice"
         "Was he pepsi?",
 
         #2. If the sentence includes a main verb and another or other helping (auxiliary) verb(s), invert the subject and the (first) helping (auxiliary) verb.

@@ -67,6 +67,7 @@ class ProcesareText:
     def getTags(self):
         # fiecare cuvant din propozitie cu partea s-a de vorbire (NN-subiect,...)
         self.posTag = pos_tag(word_tokenize(self.text))
+        # self.poSentenceTag = pos_tag(sentence_tokenize(self.text))
 
     def getSynonym(self, word):
         listSynonyms = self.dictionary.synonym(self.errorSyntaxText(word))
@@ -387,7 +388,8 @@ procesare = ProcesareText()
 sample_texts = [
     "Who is the best? Obama or Bush?",
     "Who has more apple juice? X, Y or Z?",
-    "Who is older? Obama, Putin, Merkel or Churchill?"
+    "Who is older? Obama, Putin, Merkel or Churchill?",
+    "Is New York nice?"
 ]
 
 for text in sample_texts:
@@ -397,6 +399,7 @@ for text in sample_texts:
     procesare.setInputType()
     print ('Text: %r') %procesare.originaltext
     print ('Tags: %r') %procesare.posTag
+    print ('(Sentence)Tags: %r') %procesare.posTag
     print ('Search Type: %r') %procesare.searchType
     print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
     print ('Question: %r') %procesare.inputType
