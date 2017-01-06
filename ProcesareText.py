@@ -7,7 +7,6 @@ import nltk
 import random
 from DifferenceBetween import DifferenceBetween
 
-
 class ProcesareText:
     def __init__(self):
         # searchType (categoria din care face parte propozitia)
@@ -22,6 +21,10 @@ class ProcesareText:
 
         #train to classify Question
         self._setQuestionWorld()
+
+    def setText(self, text):
+        self.originaltext = text
+        self.text = self.errorSyntaxText(text)
 
     def _setQuestionWorld(self):
         posts = nchat.xml_posts()[:10000]
@@ -155,6 +158,54 @@ class ProcesareText:
         except:
             return None
 
+    def ChooseBetween(self):
+        for index in xrange(len(self.posTag)):
+            # Who is older? Obama, Putin, Merkel or Churchill?
+            # Who is older between Obama, Putin, Merkel and Churchill?
+            # Which is solid between rock and vodka?
+            if self.posTag[index][1] == 'VBZ' and self.posTag[index][0] == 'is' and self.posTag[index + 1][1] in ['JJR',
+                                                                                                                  'JJ']:
+                nextTag = self.getNextTag(index, ['JJR', 'JJ'])
+                if nextTag is not None:
+                    self._setkeyWordsCriteriu(nextTag[0])
+                    i = index
+                    leng = len(self.posTag)
+                    subj = []
+                    while i < leng:
+                        i += 1
+                        nextTag = self.getNextTag(i, ['NNP', 'IN', 'CC', 'NN'])
+                        if nextTag is not None:
+                            if nextTag[1] not in ['NNP', 'NN']:
+                                leng -= 1
+                            else:
+                                subj.append(nextTag[0])
+                    self._setkeyWordsSubiecti(subj)
+                return True
+
+            # Who has more/less
+            elif self.posTag[index][1] == 'VBZ' and self.posTag[index][0].lower() == 'has' and self.posTag[index + 1][
+                1] in ['JJR', 'JJ']:
+                nextTag = self.getNextTag(index, ['JJR', 'JJ'])
+                if nextTag is not None:
+                    if nextTag[0] in ['more', 'less', 'fewer', 'greater']:
+                        self._setkeyWordsCriteriu(nextTag[0])
+                        noun = self.getNextTag(index + 1, ['NN', 'NNS', 'JJ'])
+                        self._setkeyWordsCriteriu(noun[0])
+                    i = index + 1
+                    leng = len(self.posTag)
+                    subj = []
+                    while i < leng:
+                        i += 1
+                        nextTag = self.getNextTag(i, ['NNP', 'IN', 'CC', 'NN'])
+                        if nextTag is not None:
+                            if nextTag[1] not in ['NNP', 'NN']:
+                                leng -= 1
+                            else:
+                                subj.append(nextTag[0])
+                    self._setkeyWordsSubiecti(subj)
+                return True
+        return False
+
     def InfoAbout(self):
         if self.searchType is not None:
             return False
@@ -199,30 +250,21 @@ class ProcesareText:
     ####### END INFO ABOUT #######
 
     def setFilter(self):
-
         self.getTags()
-
         for filterName in self.filters:
-
             filterWasImported = filterName in globals()
-
             if filterWasImported:
                 f = globals()[filterName]
                 r, v = f(self.text, self.posTag)
-
                 if r:
                     self.searchType = filterName
-
                     for item in v['criterii']:
                         self._setkeyWordsCriteriu(item)
-
                     for item in v['subiecti']:
                         self._setkeyWordsSubiecti(item)
-
                     break
             else:
                 r = getattr(self, filterName, lambda: False)()
-
                 if r:
                     self.searchType = filterName
                     break
@@ -234,17 +276,15 @@ procesare = ProcesareText()
 
 sample_texts = [
     "How many km are between Iasi and Suceava?",
-    "What Is The Difference Between Alzheimer's and Dementia?"
+    "What Is The Difference Between Alzheimer's and Dementia?",
+    "Who is the best? Obama or Bush?"
 ]
 
-for t in sample_texts:
-
-    procesare.text = procesare.errorSyntaxText(t)
-
+for text in sample_texts:
+    procesare.setText(text)
     procesare.setFilter()
     procesare.setInputType()
-
-    print ('Text: %r') %procesare.text
+    print ('Text: %r') %procesare.originaltext
     print ('Tags: %r') %procesare.posTag
     print ('Search Type: %r') %procesare.searchType
     print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
