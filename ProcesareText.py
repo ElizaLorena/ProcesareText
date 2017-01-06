@@ -16,7 +16,7 @@ class ProcesareText:
         # keyWords de forma [[(cuvant cheie, sinonim),(cuvant cheie, sinonim)],[Subiect1, Subiect2, ...]]
         self.keyWords = []
         # full text
-        self.filters = ['YesOrNo', 'DifferenceBetween', 'PersonalQuestion', 'ChooseBetween', 'MathQuestion', 'InfoAbout']
+        self.filters = ['YesOrNo', 'MathQuestion', 'ChooseBetween', 'DifferenceBetween', 'PersonalQuestion', 'InfoAbout']
         self.dictionary = PyDictionary()
 
         #train to classify Question
@@ -206,6 +206,105 @@ class ProcesareText:
                 return True
         return False
 
+    def MathQuestion(self):
+        for index in xrange(len(self.posTag)):
+            # What is the root of the (equation)..? ex:2*x+4=0
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'root':
+                nextTag = self.getNextTag(index, ['NN'])
+                if nextTag != None:
+                    if(nextTag[0]=='equation'):
+                        self._setkeyWordsCriteriu('root of equation')
+                        listaSubiecti=[]
+                        subiect=self.getNextTag(index,['CD'])
+                        subiect=subiect[0]
+                        listaSubiecti.append(subiect)
+                        self._setkeyWordsSubiecti(listaSubiecti)
+                        return True
+
+            #pentru operatii matematice simple (ex:What is the result of the 9+7-10?
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'result':
+                nextTag = self.getNextTag(index, ['IN'])
+                if nextTag != None:
+                    if (nextTag[0] == 'of'):
+                        self._setkeyWordsCriteriu('result of arithmetic operation')
+                        listaSubiecti = []
+                        subiect = self.getNextTag(index, ['CD'])
+                        subiect = subiect[0]
+                        listaSubiecti.append(subiect)
+                        self._setkeyWordsSubiecti(listaSubiecti)
+                        return True
+            #What is the value of PI?
+            if self.posTag[index][1] == 'IN' and self.posTag[index][0].lower() == 'of':
+                nextTag =self.getNextTag(index, ['NNP'])
+                if nextTag != None:
+                    if (nextTag[0].lower() == 'pi'):
+                        self._setkeyWordsCriteriu('value of pi')
+                        listaSubiecti= []
+                        subiect = self.getNextTag(index, ['NNP'])
+                        subiect=subiect[0]
+                        listaSubiecti.append(subiect)
+                        self._setkeyWordsSubiecti(listaSubiecti)
+                        return True
+            #What is the integral of ...?
+            if self.posTag[index][1] == 'JJ' and self.posTag[index][0].lower() == 'integral':
+                nextTag = self.getNextTag(index, ['CD'])
+                if nextTag != None:
+                    self._setkeyWordsCriteriu('integral of')
+                    listaSubiecti = []
+                    subiect = self.getNextTag(index, ['CD'])
+                    subiect = subiect[0]
+                    listaSubiecti.append(subiect)
+                    self._setkeyWordsSubiecti(listaSubiecti)
+                    return True
+            # What is half of x?
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'half':
+                nextTag = self.getNextTag(index, ['CD'])
+                if nextTag != None:
+                    self._setkeyWordsCriteriu('half of')
+                    listaSubiecti = []
+                    subiect = self.getNextTag(index, ['CD'])
+                    subiect = subiect[0]
+                    listaSubiecti.append(subiect)
+                    self._setkeyWordsSubiecti(listaSubiecti)
+                    return True
+            # What is sqrt/radical of x?
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'sqrt' or\
+            self.posTag[index][0].lower() == 'radical':
+                nextTag = self.getNextTag(index, ['CD'])
+                if nextTag != None:
+                    self._setkeyWordsCriteriu('sqrt of')
+                    listaSubiecti = []
+                    subiect = self.getNextTag(index, ['CD'])
+                    subiect = subiect[0]
+                    listaSubiecti.append(subiect)
+                    self._setkeyWordsSubiecti(listaSubiecti)
+                    return True
+            #What number comes after x?
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'number':
+                nextTag = self.getNextTag(index, ['IN'])
+                if nextTag != None:
+                    if (nextTag[0].lower() == 'after'):
+                        self._setkeyWordsCriteriu('number after x')
+                        listaSubiecti = []
+                        subiect = self.getNextTag(index, ['NN'])
+                        subiect = subiect[0]
+                        listaSubiecti.append(subiect)
+                        self._setkeyWordsSubiecti(listaSubiecti)
+                        return True
+            # What number comes before x?
+            if self.posTag[index][1] == 'NN' and self.posTag[index][0].lower() == 'number':
+                nextTag = self.getNextTag(index, ['IN'])
+                if nextTag != None:
+                    if (nextTag[0].lower() == 'before'):
+                        self._setkeyWordsCriteriu('number before x')
+                        listaSubiecti = []
+                        subiect = self.getNextTag(index, ['NN'])
+                        subiect = subiect[0]
+                        listaSubiecti.append(subiect)
+                        self._setkeyWordsSubiecti(listaSubiecti)
+                        return True
+        return False
+
     def InfoAbout(self):
         if self.searchType is not None:
             return False
@@ -258,6 +357,7 @@ class ProcesareText:
                 r, v = f(self.text, self.posTag)
                 if r:
                     self.searchType = filterName
+                    #self.searchType = self.filters.index(filterName)
                     for item in v['criterii']:
                         self._setkeyWordsCriteriu(item)
                     for item in v['subiecti']:
@@ -267,6 +367,7 @@ class ProcesareText:
                 r = getattr(self, filterName, lambda: False)()
                 if r:
                     self.searchType = filterName
+                    #self.searchType = self.filters.index(filterName)
                     break
 
     def setInputType(self):
@@ -277,7 +378,9 @@ procesare = ProcesareText()
 sample_texts = [
     "How many km are between Iasi and Suceava?",
     "What Is The Difference Between Alzheimer's and Dementia?",
-    "Who is the best? Obama or Bush?"
+    "Who is the best? Obama or Bush?",
+    "Who is older? Obama, Putin, Merkel or Churchill?",
+    "2+6?"
 ]
 
 for text in sample_texts:
