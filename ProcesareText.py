@@ -366,7 +366,8 @@ procesare = ProcesareText()
 sample_texts = [
     "Who is the best? Obama or Bush?",
     "Who has more apple juice? X, Y or Z?",
-    "Who is older? Obama, Putin, Merkel or Churchill?"
+    "Who is older? Obama, Putin, Merkel or Churchill?",
+    "How many km are between Iasi and Suceava"
 ]
 
 for text in sample_texts:

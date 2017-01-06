@@ -25,7 +25,11 @@ def DifferenceBetween(text, posTag):
 
     if result == 'matched':
         for word, t in reversed(posTag):
-            if t in NOUN_TYPES and word not in keywords_1:
+
+            if len(word) < 3:
+                continue
+
+            if t in NOUN_TYPES and word.lower() not in keywords_1 + keywords_2:
                 keywords['subiecti'].append(word)
 
         return True, keywords
@@ -71,9 +75,9 @@ def feature_select(text):
 
     for word, t in pos_tag(nltk.word_tokenize(text)):
         features['contains(%s)' % word.lower()] = True
-        if word in keywords_1:
+        if word.lower() in keywords_1:
             features['contains(keywords_1)'] = True
-        if word in keywords_2:
+        if word.lower() in keywords_2:
             features['contains(keywords_2)'] = True
 
     features['noun_count'] = count_nouns(text)
@@ -87,7 +91,7 @@ def count_nouns(text):
 
     for tag in posTag:
         word, t = tag
-        if t in NOUN_TYPES and word not in keywords_1:
+        if t in NOUN_TYPES and word.lower() not in keywords_1:
             nouns_found += 1
 
     return nouns_found
@@ -116,6 +120,7 @@ dictionary = PyDictionary()
 keywords_1 = ['difference', 'compare', 'evaluate']
 keywords_1 = [(dictionary.synonym(w) + [w]) for w in keywords_1]
 keywords_1 = sum(keywords_1, [])  # flatten
-keywords_2 = ['and', 'vs', 'to']
+keywords_2 = ['and', 'vs', 'to', 'between']
 
+print()
 classifier = create_classifier()
