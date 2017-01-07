@@ -12,7 +12,7 @@ def getNextTag(posTag, index, whatIs):
                         else:
                             tag = posTag[i]
                             i+=1
-                    return (tag, i)
+                    return (tag, i - 1)
             return (None, None)
         except Exception:
             return (None, None)

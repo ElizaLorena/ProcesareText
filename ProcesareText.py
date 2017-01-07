@@ -534,7 +534,7 @@ class ProcesareText:
 
 procesare = ProcesareText()
 
-sample_texts = textList.textAnaphora
+sample_texts = textList.differenceExamples
 
 for text in sample_texts:
     procesare.setText(text)

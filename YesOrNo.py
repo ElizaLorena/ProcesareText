@@ -24,17 +24,34 @@ def YesOrNo(text, posTag):
                 or 
                 tagPair[1]=="VBZ" 
             )
-            and 
-            lemmatizer.lemmatize(tagPair[0], 'v') == "be"
+            # and 
+            # lemmatizer.lemmatize(tagPair[0], 'v') == "be"
         ):
-            subject, subjectIndex = getNextTag(pos_tag, index, ["NN","NNS","NNP","NNPS","PRP"])
+            # print("\n\nVERB FOUND! : " + tagPair[0] + "\n\n")
+            
+            
+            subjectTagPair = getNextTag(posTag, index, ["NN","NNS","NNP","NNPS","PRP"])
+
+            print(subjectTagPair)
+
+            subject = subjectTagPair[0]
+            subjectIndex = subjectTagPair[1]
 
             if subject is not None:
-                criterion = getNextTag(pos_tag, subjectIndex, ["NN","NNS","NNP","NNPS","JJ","JJS","JJR"])
+                # print("\n\nSUBJECT AFTER VERB FOUND! : " + subject[0] + "\n\n")
 
-                if creterion is not None:
-                    keywords['criterii'].append(creterion)
-                    keywords['subiecti'].append(subject)
+                # print(subjectIndex)
+                criterion = getNextTag(posTag, subjectIndex, ["NN","NNS","NNP","NNPS","JJ","JJS","JJR"])[0]
+
+                if criterion is not None:
+
+                    # print("\n\nOBJECT AFTER SUBJECT AFTER VERB FOUND! : " + criterion[0] + "\n\n")
+
+                    keywords['criterii'].append(criterion[0])
+                    keywords['subiecti'].append(subject[0])
+
+                    # print(keywords)
+
                     return True, keywords
         #END 1. 
         # 
