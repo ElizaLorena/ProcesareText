@@ -7,6 +7,7 @@ import nltk
 import random
 import textList
 from DifferenceBetween import DifferenceBetween
+from OpinionQuestion import OpinionQuestion
 from YesOrNo import YesOrNo
 
 class ProcesareText:
@@ -24,7 +25,7 @@ class ProcesareText:
         self.PRP = [('it','he','she', 'him', 'her'), ('we', 'they', 'us', 'them')]
         self.PRPP = [('his', 'her', 'its', 'hers'), ('our', 'their')]
         # train to classify Question
-        self.filters = ['YesOrNo', 'DifferenceBetween', 'PersonalQuestion', 'MathQuestion', 'ChooseBetween', 'InfoAbout']
+        self.filters = ['OpinionQuestion','YesOrNo', 'DifferenceBetween', 'PersonalQuestion', 'MathQuestion', 'ChooseBetween', 'InfoAbout']
         self.dictionary = PyDictionary()
 
         #train to classify Question
@@ -188,8 +189,12 @@ class ProcesareText:
         except Exception:
             while (len(self.keyWords) < 2):
                 self.keyWords.append(list())
-        for subiect in listaSubiecti:
-            self.keyWords[1].append(subiect)
+
+        # if type(listaSubiecti) is list:
+        #     for subiect in listaSubiecti:
+        #         self.keyWords[1].append(subiect)
+        # else:
+            self.keyWords[1].append(listaSubiecti)
 
     #tag[0] - life
     #tag[1] - NN
@@ -534,7 +539,7 @@ class ProcesareText:
 
 procesare = ProcesareText()
 
-sample_texts = textList.differenceExamples
+sample_texts = textList.opinionQuestions
 
 for text in sample_texts:
     procesare.setText(text)

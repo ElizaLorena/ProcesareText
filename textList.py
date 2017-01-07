@@ -87,3 +87,11 @@ yesOrNo = [
     "Did John discover the truth?",
     "Did the chicken cross the road?"
 ]
+
+opinionQuestions = [
+
+	"When do you think school will begin?",
+	"What do you think about me?",
+    "What is your opinion about school?",
+	
+]
