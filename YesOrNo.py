@@ -10,23 +10,58 @@ lemmatizer = WordNetLemmatizer()
 
 
 def YesOrNo(text, posTag):
-    #print("YEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n")
-    for tagPair in posTag:
-        pass
-        #print(tagPair)
+    keywords = {'subiecti': [], 'criterii': []}
 
-        #1.
-#        if(lemmatizer.lemmatize(tagPair[0], 'v') == "be"):
-#            subject = getNextTag(posTag, )
-        
-    return False, []
-    #print("BOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n\n")
+    for index in xrange(len(posTag)):
+        tagPair = posTag[index]
 
+        # 1.
+        if(
+            (
+                tagPair[1]=="VBD" 
+                or 
+                tagPair[1]=="VBP" 
+                or 
+                tagPair[1]=="VBZ" 
+            )
+            # and 
+            # lemmatizer.lemmatize(tagPair[0], 'v') == "be"
+        ):
+            # print("\n\nVERB FOUND! : " + tagPair[0] + "\n\n")
+            
+            
+            subjectTagPair = getNextTag(posTag, index, ["NN","NNS","NNP","NNPS","PRP"])
 
+            print(subjectTagPair)
+
+            subject = subjectTagPair[0]
+            subjectIndex = subjectTagPair[1]
+
+            if subject is not None:
+                # print("\n\nSUBJECT AFTER VERB FOUND! : " + subject[0] + "\n\n")
+
+                # print(subjectIndex)
+                criterion = getNextTag(posTag, subjectIndex, ["NN","NNS","NNP","NNPS","JJ","JJS","JJR"])[0]
+
+                if criterion is not None:
+
+                    # print("\n\nOBJECT AFTER SUBJECT AFTER VERB FOUND! : " + criterion[0] + "\n\n")
+
+                    keywords['criterii'].append(criterion[0])
+                    keywords['subiecti'].append(subject[0])
+
+                    # print(keywords)
+
+                    return True, keywords
+        #END 1. 
+        # 
+        # 2.   
+    return False, keywords
+    
 sample_questions = [
         #1. If the main verb of the sentence is "to be", simply invert the subject and the verb to be:
         "Are they American?", # to be - subject - object
-        "Is New York nice? ", # from "New York is nice"
+        "Is New York nice?", # from "New York is nice"
         "Was he pepsi?",
 
         #2. If the sentence includes a main verb and another or other helping (auxiliary) verb(s), invert the subject and the (first) helping (auxiliary) verb.

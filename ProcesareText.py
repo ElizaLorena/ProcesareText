@@ -109,6 +109,7 @@ class ProcesareText:
     def setTags(self):
         # fiecare cuvant din propozitie cu partea s-a de vorbire (NN-subiect,...)
         self.posTag = pos_tag(word_tokenize(self.text))
+        # self.poSentenceTag = pos_tag(sentence_tokenize(self.text))
 
     def getSynonym(self, word):
         listSynonyms = self.dictionary.synonym(self.errorSyntaxText(word))
@@ -532,7 +533,8 @@ class ProcesareText:
         self.inputType = self.classify_sentence(self.text)
 
 procesare = ProcesareText()
-sample_texts = textList.textAnaphora
+
+sample_texts = textList.differenceExamples
 
 for text in sample_texts:
     procesare.setText(text)
@@ -542,6 +544,7 @@ for text in sample_texts:
     print  ('Original Text: %r') %procesare.originaltext
     print ('Text: %r') %procesare.text
     print ('Tags: %r') %procesare.posTag
+    print ('(Sentence)Tags: %r') %procesare.posTag
     print ('Search Type: %r') %procesare.searchType
     print ('Key Words (criterii,subiecti): %r') %procesare.keyWords
     print ('Question: %r') %procesare.inputType

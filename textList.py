@@ -69,3 +69,21 @@ differenceExamples = [
     "Who is older? Obama, Putin, Merkel or Churchill?",
     "How many km are between Iasi and Suceava"
 ]
+
+yesOrNo = [
+    "Are they American?",
+    "Is New York nice?",
+    "Was he pepsi?",
+
+    "Are they visiting Paris",
+    "Has Nancy been working all night long?",
+
+    "Do you like apples?",
+    "Do they go to a high school?",
+
+    "Does Nancy read a lot?",
+    "Does he hate basketball?",
+
+    "Did John discover the truth?",
+    "Did the chicken cross the road?"
+]
