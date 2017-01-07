@@ -4,7 +4,6 @@ personalQuestions = [
     "What is your partner's name?",
     "Cata is your name?",
     "Is Thomas your name?",
-    "What about your name?",
     "Tell me one of your favorite movie.",
     "Do you like your job?",
     "Do you have a boyfriend?",
@@ -19,7 +18,7 @@ personalQuestions = [
     "where is your boyfriend?",
     "where do you leave?",
     "where are you leaving?",
-    "Where is your hause?",
+    "Where is your house?",
     "When do you go home?",
     "When is your meeting?",
     "When are you turn into superman?",
@@ -59,5 +58,14 @@ textAnaphora = [
     "Me, Obama and Trump are great!",
     "Are we great?",
     "Neymar, Messi and Pogba have a great skils",
-    "Their skills are indestructible"
+    "Their skills are indestructible",
+    "Apple is a great fruit.",
+    "What is your opinion about it?"
+]
+
+differenceExamples = [
+    "Who is the best? Obama or Bush?",
+    "Who has more apple juice? X, Y or Z?",
+    "Who is older? Obama, Putin, Merkel or Churchill?",
+    "How many km are between Iasi and Suceava"
 ]
