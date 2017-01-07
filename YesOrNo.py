@@ -41,10 +41,6 @@ def YesOrNo(text, posTag):
         # 2.   
     return False, keywords
     
-
-
-
-
 sample_questions = [
         #1. If the main verb of the sentence is "to be", simply invert the subject and the verb to be:
         "Are they American?", # to be - subject - object
