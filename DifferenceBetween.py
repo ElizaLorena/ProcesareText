@@ -4,6 +4,8 @@ from PyDictionary import PyDictionary
 from nltk.corpus import nps_chat as nchat
 import nltk
 
+NOUN_TYPES = ['NN', 'NNS', 'NNP', 'PRP']
+
 
 def DifferenceBetween(text, posTag):
 
@@ -19,12 +21,16 @@ def DifferenceBetween(text, posTag):
     sentence = feature_select(text)
     result = classifier.classify(sentence)
 
-    keywords = {'subiecti': [], 'criterii': []}
+    keywords = {'subiecti': [], 'criterii': ['difference']}
 
     if result == 'matched':
         for word, t in reversed(posTag):
-            if t in ['NN', 'NNS'] and word not in keywords_1:
-                keywords['criterii'].append(word)
+
+            if len(word) < 3:
+                continue
+
+            if t in NOUN_TYPES and word.lower() not in keywords_1 + keywords_2:
+                keywords['subiecti'].append(word)
 
         return True, keywords
     else:
@@ -40,7 +46,9 @@ def create_classifier():
         "How would you compare lacrosse to football?",
         "How would you compare NetSuite vs Intacct?",
         "How many km are between Iasi and Hawaii?",
-        "Tell me the difference between Obama and Trump"
+        "Tell me the difference between Obama and Trump",
+        "What is the difference between me and you?",
+        "Elaborate on why Trump is better than Obama"
     ]
 
     sample_unmatched = nchat.xml_posts()[:800]
@@ -67,9 +75,9 @@ def feature_select(text):
 
     for word, t in pos_tag(nltk.word_tokenize(text)):
         features['contains(%s)' % word.lower()] = True
-        if word in keywords_1:
+        if word.lower() in keywords_1:
             features['contains(keywords_1)'] = True
-        if word in keywords_2:
+        if word.lower() in keywords_2:
             features['contains(keywords_2)'] = True
 
     features['noun_count'] = count_nouns(text)
@@ -83,7 +91,7 @@ def count_nouns(text):
 
     for tag in posTag:
         word, t = tag
-        if t in ['NN', 'NNS', 'NNP'] and word not in keywords_1:
+        if t in NOUN_TYPES and word.lower() not in keywords_1:
             nouns_found += 1
 
     return nouns_found
@@ -101,6 +109,10 @@ def contains_cc(text):
             return True
         if word == 'to' and t == 'TO':
             return True
+        if word == 'than' and t == 'IN':
+            return True
+
+    return False
 
 
 dictionary = PyDictionary()
@@ -108,6 +120,6 @@ dictionary = PyDictionary()
 keywords_1 = ['difference', 'compare', 'evaluate']
 keywords_1 = [(dictionary.synonym(w) + [w]) for w in keywords_1]
 keywords_1 = sum(keywords_1, [])  # flatten
-keywords_2 = ['and', 'vs', 'to']
+keywords_2 = ['and', 'vs', 'to', 'between']
 
 classifier = create_classifier()

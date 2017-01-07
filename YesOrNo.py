@@ -10,18 +10,17 @@ lemmatizer = WordNetLemmatizer()
 
 
 def YesOrNo(text, posTag):
-    print("YEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n")
+    #print("YEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n\n")
     for tagPair in posTag:
-        print(tagPair)
+        pass
+        #print(tagPair)
 
         #1.
-        if(lemmatizer.lemmatize(tagPair[0], 'v') == "be"):
-            subject = getNextTag(posTag, )
+#        if(lemmatizer.lemmatize(tagPair[0], 'v') == "be"):
+#            subject = getNextTag(posTag, )
         
     return False, []
-    print("BOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n\n")
-
-
+    #print("BOIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII\n\n")
 
 
 sample_questions = [
